@@ -1,7 +1,7 @@
 import logging
+from .const import DOMAIN
 
 _LOGGER = logging.getLogger(__name__)
-DOMAIN = "plant_mk"
 
 async def async_setup(hass, config):
     """Konfiguracja integracji przez plik configuration.yaml (opcjonalnie)."""
@@ -9,7 +9,9 @@ async def async_setup(hass, config):
     return True
 
 async def async_setup_entry(hass, entry):
-    """Konfiguracja integracji przez interfejs użytkownika (UI)."""
-    hass.data.setdefault(DOMAIN, {})
-    # Tutaj w przyszłości dodamy przekazywanie danych do sensorów
+    """Set up MK Plant System from a config entry."""
+    # Przekazuje dane z formularza do platformy sensorów
+    hass.async_create_task(
+        hass.config_entries.async_forward_entry_setup(entry, "sensor")
+    )
     return True

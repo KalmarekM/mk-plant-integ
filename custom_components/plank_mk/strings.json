@@ -1,0 +1,17 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "data": {
+          "plant_name": "Plant Name",
+          "moisture_sensor": "Moisture Sensor Entity ID",
+          "min_moisture": "Minimum Moisture (%)",
+          "max_moisture": "Maximum Moisture (%)",
+          "temp_sensor": "Temperature Sensor Entity ID",
+          "min_temp": "Minimum Temperature (°C)",
+          "max_temp": "Maximum Temperature (°C)"
+        }
+      }
+    }
+  }
+}
