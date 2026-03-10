@@ -25,9 +25,9 @@ def _num_default(defaults, key, fallback):
     except (TypeError, ValueError):
         return fallback
 
-def plant_schema(defaults):
-    """Build a shared threshold schema for setup and options flows."""
-    if HAS_SELECTORS:
+def plant_schema(defaults, use_selectors=False):
+    """Build threshold schema for setup and options flows."""
+    if use_selectors and HAS_SELECTORS:
         return vol.Schema({
             vol.Required("min_moisture", default=_num_default(defaults, "min_moisture", 20)): NumberSelector(
                 NumberSelectorConfig(min=0, max=100, mode=NumberSelectorMode.SLIDER)
@@ -86,14 +86,14 @@ class MKPlantConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 vol.Required("moisture_sensor"): EntitySelector(EntitySelectorConfig(domain="sensor")),
                 vol.Required("temp_sensor"): EntitySelector(EntitySelectorConfig(domain="sensor")),
                 vol.Required("humi_sensor"): EntitySelector(EntitySelectorConfig(domain="sensor")),
-            }).extend(plant_schema({}).schema)
+            }).extend(plant_schema({}, use_selectors=True).schema)
         else:
             full_schema = vol.Schema({
                 vol.Required("plant_name"): str,
                 vol.Required("moisture_sensor"): str,
                 vol.Required("temp_sensor"): str,
                 vol.Required("humi_sensor"): str,
-            }).extend(plant_schema({}).schema)
+            }).extend(plant_schema({}, use_selectors=False).schema)
 
         return self.async_show_form(step_id="user", data_schema=full_schema, errors=errors)
 
@@ -117,8 +117,11 @@ class MKPlantOptionsFlowHandler(config_entries.OptionsFlow):
                 return self.async_create_entry(title="", data={})
             return self.async_show_form(
                 step_id="init",
-                data_schema=plant_schema(self.config_entry.data),
+                data_schema=plant_schema(self.config_entry.data, use_selectors=False),
                 errors=errors,
             )
 
-        return self.async_show_form(step_id="init", data_schema=plant_schema(self.config_entry.data))
+        return self.async_show_form(
+            step_id="init",
+            data_schema=plant_schema(self.config_entry.data, use_selectors=False),
+        )
