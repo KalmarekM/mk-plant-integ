@@ -1,5 +1,10 @@
 {
   "config": {
+    "error": {
+      "invalid_moisture_range": "Minimalna wilgotność nie może być większa niż maksymalna.",
+      "invalid_temp_range": "Minimalna temperatura nie może być większa niż maksymalna.",
+      "invalid_humi_range": "Minimalna wilgotność powietrza nie może być większa niż maksymalna."
+    },
     "step": {
       "user": {
         "data": {
