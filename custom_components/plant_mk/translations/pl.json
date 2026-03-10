@@ -1,4 +1,17 @@
 {
+  "entity": {
+    "sensor": {
+      "moisture": {
+        "name": "Wilgoć"
+      },
+      "temperature": {
+        "name": "Temperatura"
+      },
+      "humidity": {
+        "name": "Wilgotność"
+      }
+    }
+  },
   "config": {
     "error": {
       "invalid_moisture_range": "Minimalna wilgotność nie może być większa niż maksymalna.",

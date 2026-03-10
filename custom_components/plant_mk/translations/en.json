@@ -1,4 +1,17 @@
 {
+  "entity": {
+    "sensor": {
+      "moisture": {
+        "name": "Moisture"
+      },
+      "temperature": {
+        "name": "Temperature"
+      },
+      "humidity": {
+        "name": "Humidity"
+      }
+    }
+  },
   "config": {
     "error": {
       "invalid_moisture_range": "Minimum moisture cannot be greater than maximum.",

@@ -1,23 +1,59 @@
 {
+  "entity": {
+    "sensor": {
+      "moisture": {
+        "name": "Moisture"
+      },
+      "temperature": {
+        "name": "Temperature"
+      },
+      "humidity": {
+        "name": "Humidity"
+      }
+    }
+  },
   "config": {
     "error": {
-      "invalid_moisture_range": "Minimalna wilgotność nie może być większa niż maksymalna.",
-      "invalid_temp_range": "Minimalna temperatura nie może być większa niż maksymalna.",
-      "invalid_humi_range": "Minimalna wilgotność powietrza nie może być większa niż maksymalna."
+      "invalid_moisture_range": "Minimum moisture cannot be greater than maximum.",
+      "invalid_temp_range": "Minimum temperature cannot be greater than maximum.",
+      "invalid_humi_range": "Minimum humidity cannot be greater than maximum."
     },
     "step": {
       "user": {
         "data": {
-          "plant_name": "Nazwa rośliny",
-          "moisture_sensor": "Sensor wilgotności gleby",
-          "min_moisture": "Minimalna wilgotność (%)",
-          "max_moisture": "Maksymalna wilgotność (%)",
-          "temp_sensor": "Sensor temperatury",
-          "min_temp": "Minimalna temperatura (°C)",
-          "max_temp": "Maksymalna temperatura (°C)",
-          "humi_sensor": "Sensor wilgotności powietrza",
-          "min_humi": "Minimalna wilgotność powietrza (%)",
-          "max_humi": "Maksymalna wilgotność powietrza (%)"
+          "plant_name": "Plant name",
+          "moisture_sensor": "Soil moisture sensor",
+          "min_moisture": "Minimum moisture (%)",
+          "max_moisture": "Maximum moisture (%)",
+          "temp_sensor": "Temperature sensor",
+          "min_temp": "Minimum temperature (°C)",
+          "max_temp": "Maximum temperature (°C)",
+          "humi_sensor": "Air humidity sensor",
+          "min_humi": "Minimum air humidity (%)",
+          "max_humi": "Maximum air humidity (%)"
+        }
+      }
+    }
+  },
+  "options": {
+    "error": {
+      "invalid_moisture_range": "Minimum moisture cannot be greater than maximum.",
+      "invalid_temp_range": "Minimum temperature cannot be greater than maximum.",
+      "invalid_humi_range": "Minimum humidity cannot be greater than maximum."
+    },
+    "step": {
+      "init": {
+        "title": "Alert thresholds",
+        "data": {
+          "moisture_sensor": "Soil moisture sensor",
+          "temp_sensor": "Temperature sensor",
+          "humi_sensor": "Air humidity sensor",
+          "min_moisture": "Minimum moisture (%)",
+          "max_moisture": "Maximum moisture (%)",
+          "min_temp": "Minimum temperature (°C)",
+          "max_temp": "Maximum temperature (°C)",
+          "min_humi": "Minimum air humidity (%)",
+          "max_humi": "Maximum air humidity (%)"
         }
       }
     }

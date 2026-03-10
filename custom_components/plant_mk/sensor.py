@@ -28,6 +28,8 @@ class MKPlantNumericSensor(SensorEntity):
         self._min_val = min_val
         self._max_val = max_val
         self._attr_unique_id = f"{plant_name}_{param_type}"
+        self._attr_has_entity_name = True
+        self._attr_translation_key = param_type
 
         if param_type == "temperature":
             self._attr_device_class = SensorDeviceClass.TEMPERATURE
@@ -40,10 +42,6 @@ class MKPlantNumericSensor(SensorEntity):
             self._attr_native_unit_of_measurement = PERCENTAGE
 
         self._attr_state_class = SensorStateClass.MEASUREMENT
-
-    @property
-    def name(self):
-        return f"{self._plant_name} {self._param_type.capitalize()}"
 
     @property
     def native_value(self):
