@@ -46,3 +46,29 @@ class MKPlantConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         })
 
         return self.async_show_form(step_id="user", data_schema=data_schema)
+    
+    @staticmethod
+    @callback
+    def async_get_options_flow(config_entry):
+        return MKPlantOptionsFlowHandler(config_entry)
+    
+class MKPlantOptionsFlowHandler(config_entries.OptionsFlow):
+    """Handle options for the plant (editing)."""
+
+    def __init__(self, config_entry):
+        self.config_entry = config_entry
+
+    async def async_step_init(self, user_input=None):
+        """Manage the options."""
+        if user_input is not None:
+            return self.async_create_entry(title="", data=user_input)
+
+        # Formularz edycji (używamy danych z entry.data jako domyślnych)
+        return self.async_show_form(
+            step_id="init",
+            data_schema=vol.Schema({
+                vol.Required("min_moisture", default=self.config_entry.data.get("min_moisture")): int,
+                vol.Required("max_moisture", default=self.config_entry.data.get("max_moisture")): int,
+                # Tutaj dodaj resztę pól, które chcesz edytować
+            })
+        )    

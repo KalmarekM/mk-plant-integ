@@ -64,3 +64,13 @@ class MKPlantNumericSensor(SensorEntity):
             "max_threshold": self._max_val,
             "source_entity": self._source_id
         }
+    
+    @property
+    def device_info(self):
+        """Return information about the device."""
+        return {
+            "identifiers": {(DOMAIN, self._plant_name)}, # type: ignore
+            "name": self._plant_name,
+            "manufacturer": "Marek Custom",
+            "model": "Plant System v1",
+        }

@@ -4,12 +4,15 @@
       "user": {
         "data": {
           "plant_name": "Nazwa rośliny",
-          "moisture_sensor": "Wybierz sensor wilgotności gleby",
+          "moisture_sensor": "Sensor wilgotności gleby",
           "min_moisture": "Minimalna wilgotność (%)",
-          "temp_sensor": "Wybierz sensor temperatury",
+          "max_moisture": "Maksymalna wilgotność (%)",
+          "temp_sensor": "Sensor temperatury",
           "min_temp": "Minimalna temperatura (°C)",
-          "humi_sensor": "Wybierz sensor wilgotności powietrza",
-          "min_humi": "Minimalna wilgotność powietrza (%)"
+          "max_temp": "Maksymalna temperatura (°C)",
+          "humi_sensor": "Sensor wilgotności powietrza",
+          "min_humi": "Minimalna wilgotność powietrza (%)",
+          "max_humi": "Maksymalna wilgotność powietrza (%)"
         }
       }
     }
