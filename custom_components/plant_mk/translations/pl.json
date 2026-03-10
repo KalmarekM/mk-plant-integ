@@ -32,6 +32,9 @@
       "init": {
         "title": "Progi alarmowe",
         "data": {
+          "moisture_sensor": "Sensor wilgotności gleby",
+          "temp_sensor": "Sensor temperatury",
+          "humi_sensor": "Sensor wilgotności powietrza",
           "min_moisture": "Minimalna wilgotność (%)",
           "max_moisture": "Maksymalna wilgotność (%)",
           "min_temp": "Minimalna temperatura (°C)",

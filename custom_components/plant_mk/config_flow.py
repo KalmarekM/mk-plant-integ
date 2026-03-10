@@ -106,6 +106,15 @@ class MKPlantOptionsFlowHandler(config_entries.OptionsFlow):
     def __init__(self, config_entry):
         self._config_entry = config_entry
 
+    def _options_schema(self):
+        """Build options schema with sensor bindings and thresholds."""
+        defaults = self._config_entry.data
+        return vol.Schema({
+            vol.Required("moisture_sensor", default=defaults.get("moisture_sensor", "")): str,
+            vol.Required("temp_sensor", default=defaults.get("temp_sensor", "")): str,
+            vol.Required("humi_sensor", default=defaults.get("humi_sensor", "")): str,
+        }).extend(plant_schema(defaults, use_selectors=False).schema)
+
     async def async_step_init(self, user_input=None):
         if user_input is not None:
             errors = validate_thresholds(user_input)
@@ -117,11 +126,11 @@ class MKPlantOptionsFlowHandler(config_entries.OptionsFlow):
                 return self.async_create_entry(title="", data={})
             return self.async_show_form(
                 step_id="init",
-                data_schema=plant_schema(self._config_entry.data, use_selectors=False),
+                data_schema=self._options_schema(),
                 errors=errors,
             )
 
         return self.async_show_form(
             step_id="init",
-            data_schema=plant_schema(self._config_entry.data, use_selectors=False),
+            data_schema=self._options_schema(),
         )

@@ -32,6 +32,9 @@
       "init": {
         "title": "Alert thresholds",
         "data": {
+          "moisture_sensor": "Soil moisture sensor",
+          "temp_sensor": "Temperature sensor",
+          "humi_sensor": "Air humidity sensor",
           "min_moisture": "Minimum moisture (%)",
           "max_moisture": "Maximum moisture (%)",
           "min_temp": "Minimum temperature (°C)",
