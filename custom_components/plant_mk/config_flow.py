@@ -104,24 +104,24 @@ class MKPlantConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
 
 class MKPlantOptionsFlowHandler(config_entries.OptionsFlow):
     def __init__(self, config_entry):
-        self.config_entry = config_entry
+        self._config_entry = config_entry
 
     async def async_step_init(self, user_input=None):
         if user_input is not None:
             errors = validate_thresholds(user_input)
             if not errors:
                 # Persist thresholds in entry.data to keep entity setup logic simple.
-                new_data = dict(self.config_entry.data)
+                new_data = dict(self._config_entry.data)
                 new_data.update(user_input)
-                self.hass.config_entries.async_update_entry(self.config_entry, data=new_data)
+                self.hass.config_entries.async_update_entry(self._config_entry, data=new_data)
                 return self.async_create_entry(title="", data={})
             return self.async_show_form(
                 step_id="init",
-                data_schema=plant_schema(self.config_entry.data, use_selectors=False),
+                data_schema=plant_schema(self._config_entry.data, use_selectors=False),
                 errors=errors,
             )
 
         return self.async_show_form(
             step_id="init",
-            data_schema=plant_schema(self.config_entry.data, use_selectors=False),
+            data_schema=plant_schema(self._config_entry.data, use_selectors=False),
         )
