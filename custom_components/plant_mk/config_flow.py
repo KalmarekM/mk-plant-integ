@@ -1,5 +1,6 @@
 import voluptuous as vol # type: ignore
 from homeassistant import config_entries # type: ignore
+from homeassistant.core import callback  # type: ignore
 from homeassistant.helpers.selector import ( # type: ignore
     EntitySelector,
     EntitySelectorConfig,
