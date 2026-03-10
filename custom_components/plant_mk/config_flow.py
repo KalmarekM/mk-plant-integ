@@ -16,37 +16,46 @@ except ImportError:  # pragma: no cover
 
 from .const import DOMAIN
 
+
+def _num_default(defaults, key, fallback):
+    """Return numeric default robustly, even for legacy string values."""
+    value = defaults.get(key, fallback)
+    try:
+        return float(value)
+    except (TypeError, ValueError):
+        return fallback
+
 def plant_schema(defaults):
     """Build a shared threshold schema for setup and options flows."""
     if HAS_SELECTORS:
         return vol.Schema({
-            vol.Required("min_moisture", default=defaults.get("min_moisture", 20)): NumberSelector(
+            vol.Required("min_moisture", default=_num_default(defaults, "min_moisture", 20)): NumberSelector(
                 NumberSelectorConfig(min=0, max=100, mode=NumberSelectorMode.SLIDER)
             ),
-            vol.Required("max_moisture", default=defaults.get("max_moisture", 60)): NumberSelector(
+            vol.Required("max_moisture", default=_num_default(defaults, "max_moisture", 60)): NumberSelector(
                 NumberSelectorConfig(min=0, max=100, mode=NumberSelectorMode.SLIDER)
             ),
-            vol.Required("min_temp", default=defaults.get("min_temp", 15)): NumberSelector(
+            vol.Required("min_temp", default=_num_default(defaults, "min_temp", 15)): NumberSelector(
                 NumberSelectorConfig(min=0, max=50, unit_of_measurement="°C", mode=NumberSelectorMode.BOX)
             ),
-            vol.Required("max_temp", default=defaults.get("max_temp", 30)): NumberSelector(
+            vol.Required("max_temp", default=_num_default(defaults, "max_temp", 30)): NumberSelector(
                 NumberSelectorConfig(min=0, max=50, unit_of_measurement="°C", mode=NumberSelectorMode.BOX)
             ),
-            vol.Required("min_humi", default=defaults.get("min_humi", 30)): NumberSelector(
+            vol.Required("min_humi", default=_num_default(defaults, "min_humi", 30)): NumberSelector(
                 NumberSelectorConfig(min=0, max=100, mode=NumberSelectorMode.SLIDER)
             ),
-            vol.Required("max_humi", default=defaults.get("max_humi", 80)): NumberSelector(
+            vol.Required("max_humi", default=_num_default(defaults, "max_humi", 80)): NumberSelector(
                 NumberSelectorConfig(min=0, max=100, mode=NumberSelectorMode.SLIDER)
             ),
         })
 
     return vol.Schema({
-        vol.Required("min_moisture", default=defaults.get("min_moisture", 20)): vol.All(vol.Coerce(float), vol.Range(min=0, max=100)),
-        vol.Required("max_moisture", default=defaults.get("max_moisture", 60)): vol.All(vol.Coerce(float), vol.Range(min=0, max=100)),
-        vol.Required("min_temp", default=defaults.get("min_temp", 15)): vol.All(vol.Coerce(float), vol.Range(min=0, max=50)),
-        vol.Required("max_temp", default=defaults.get("max_temp", 30)): vol.All(vol.Coerce(float), vol.Range(min=0, max=50)),
-        vol.Required("min_humi", default=defaults.get("min_humi", 30)): vol.All(vol.Coerce(float), vol.Range(min=0, max=100)),
-        vol.Required("max_humi", default=defaults.get("max_humi", 80)): vol.All(vol.Coerce(float), vol.Range(min=0, max=100)),
+        vol.Required("min_moisture", default=_num_default(defaults, "min_moisture", 20)): vol.All(vol.Coerce(float), vol.Range(min=0, max=100)),
+        vol.Required("max_moisture", default=_num_default(defaults, "max_moisture", 60)): vol.All(vol.Coerce(float), vol.Range(min=0, max=100)),
+        vol.Required("min_temp", default=_num_default(defaults, "min_temp", 15)): vol.All(vol.Coerce(float), vol.Range(min=0, max=50)),
+        vol.Required("max_temp", default=_num_default(defaults, "max_temp", 30)): vol.All(vol.Coerce(float), vol.Range(min=0, max=50)),
+        vol.Required("min_humi", default=_num_default(defaults, "min_humi", 30)): vol.All(vol.Coerce(float), vol.Range(min=0, max=100)),
+        vol.Required("max_humi", default=_num_default(defaults, "max_humi", 80)): vol.All(vol.Coerce(float), vol.Range(min=0, max=100)),
     })
 
 

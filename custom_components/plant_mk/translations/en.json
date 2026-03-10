@@ -30,6 +30,7 @@
     },
     "step": {
       "init": {
+        "title": "Alert thresholds",
         "data": {
           "min_moisture": "Minimum moisture (%)",
           "max_moisture": "Maximum moisture (%)",

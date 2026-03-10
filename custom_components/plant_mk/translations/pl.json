@@ -30,6 +30,7 @@
     },
     "step": {
       "init": {
+        "title": "Progi alarmowe",
         "data": {
           "min_moisture": "Minimalna wilgotność (%)",
           "max_moisture": "Maksymalna wilgotność (%)",
