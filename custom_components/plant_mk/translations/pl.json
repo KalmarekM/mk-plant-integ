@@ -1,0 +1,44 @@
+{
+  "config": {
+    "error": {
+      "invalid_moisture_range": "Minimalna wilgotność nie może być większa niż maksymalna.",
+      "invalid_temp_range": "Minimalna temperatura nie może być większa niż maksymalna.",
+      "invalid_humi_range": "Minimalna wilgotność powietrza nie może być większa niż maksymalna."
+    },
+    "step": {
+      "user": {
+        "data": {
+          "plant_name": "Nazwa rośliny",
+          "moisture_sensor": "Sensor wilgotności gleby",
+          "min_moisture": "Minimalna wilgotność (%)",
+          "max_moisture": "Maksymalna wilgotność (%)",
+          "temp_sensor": "Sensor temperatury",
+          "min_temp": "Minimalna temperatura (°C)",
+          "max_temp": "Maksymalna temperatura (°C)",
+          "humi_sensor": "Sensor wilgotności powietrza",
+          "min_humi": "Minimalna wilgotność powietrza (%)",
+          "max_humi": "Maksymalna wilgotność powietrza (%)"
+        }
+      }
+    }
+  },
+  "options": {
+    "error": {
+      "invalid_moisture_range": "Minimalna wilgotność nie może być większa niż maksymalna.",
+      "invalid_temp_range": "Minimalna temperatura nie może być większa niż maksymalna.",
+      "invalid_humi_range": "Minimalna wilgotność powietrza nie może być większa niż maksymalna."
+    },
+    "step": {
+      "init": {
+        "data": {
+          "min_moisture": "Minimalna wilgotność (%)",
+          "max_moisture": "Maksymalna wilgotność (%)",
+          "min_temp": "Minimalna temperatura (°C)",
+          "max_temp": "Maksymalna temperatura (°C)",
+          "min_humi": "Minimalna wilgotność powietrza (%)",
+          "max_humi": "Maksymalna wilgotność powietrza (%)"
+        }
+      }
+    }
+  }
+}

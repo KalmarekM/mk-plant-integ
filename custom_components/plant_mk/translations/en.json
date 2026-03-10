@@ -1,0 +1,44 @@
+{
+  "config": {
+    "error": {
+      "invalid_moisture_range": "Minimum moisture cannot be greater than maximum.",
+      "invalid_temp_range": "Minimum temperature cannot be greater than maximum.",
+      "invalid_humi_range": "Minimum humidity cannot be greater than maximum."
+    },
+    "step": {
+      "user": {
+        "data": {
+          "plant_name": "Plant name",
+          "moisture_sensor": "Soil moisture sensor",
+          "min_moisture": "Minimum moisture (%)",
+          "max_moisture": "Maximum moisture (%)",
+          "temp_sensor": "Temperature sensor",
+          "min_temp": "Minimum temperature (°C)",
+          "max_temp": "Maximum temperature (°C)",
+          "humi_sensor": "Air humidity sensor",
+          "min_humi": "Minimum air humidity (%)",
+          "max_humi": "Maximum air humidity (%)"
+        }
+      }
+    }
+  },
+  "options": {
+    "error": {
+      "invalid_moisture_range": "Minimum moisture cannot be greater than maximum.",
+      "invalid_temp_range": "Minimum temperature cannot be greater than maximum.",
+      "invalid_humi_range": "Minimum humidity cannot be greater than maximum."
+    },
+    "step": {
+      "init": {
+        "data": {
+          "min_moisture": "Minimum moisture (%)",
+          "max_moisture": "Maximum moisture (%)",
+          "min_temp": "Minimum temperature (°C)",
+          "max_temp": "Maximum temperature (°C)",
+          "min_humi": "Minimum air humidity (%)",
+          "max_humi": "Maximum air humidity (%)"
+        }
+      }
+    }
+  }
+}
