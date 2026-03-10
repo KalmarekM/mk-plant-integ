@@ -7,14 +7,17 @@ from homeassistant.components.sensor import SensorEntity, SensorDeviceClass, Sen
 from homeassistant.const import PERCENTAGE, UnitOfTemperature # type: ignore
 
 async def async_setup_entry(hass, entry, async_add_entities):
-    """Set up sensors from a config entry created via UI."""
+    """Set up sensors for a specific plant entry."""
     config = entry.data
-    name = config["plant_name"]
-
+    plant_name = config["plant_name"]
+    
+    # We create 3 sensors for this specific plant
     sensors = [
-        MKPlantNumericSensor(hass, name, "moisture", config["moisture_sensor"], config["min_moisture"], config["max_moisture"]),
-        MKPlantNumericSensor(hass, name, "temperature", config["temp_sensor"], config["min_temp"], config["max_temp"]),
+        MKPlantNumericSensor(hass, plant_name, "moisture", config["moisture_sensor"], config["min_moisture"], config["max_moisture"]),
+        MKPlantNumericSensor(hass, plant_name, "temperature", config["temp_sensor"], config["min_temp"], config["max_temp"]),
+        MKPlantNumericSensor(hass, plant_name, "humidity", config["humi_sensor"], config["min_humi"], config["max_humi"]),
     ]
+    
     async_add_entities(sensors)
 
 class MKPlantNumericSensor(SensorEntity):
