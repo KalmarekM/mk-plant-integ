@@ -21,27 +21,36 @@ class MKPlantConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         data_schema = vol.Schema({
             vol.Required("plant_name"): str,
             
-            # Selektor dla sensora wilgotności
+            # Wilgotność gleby
             vol.Required("moisture_sensor"): EntitySelector(
                 EntitySelectorConfig(domain="sensor", device_class="moisture")
             ),
             vol.Required("min_moisture", default=20): NumberSelector(
                 NumberSelectorConfig(min=0, max=100, mode=NumberSelectorMode.SLIDER)
             ),
+            vol.Required("max_moisture", default=60): NumberSelector(
+                NumberSelectorConfig(min=0, max=100, mode=NumberSelectorMode.SLIDER)
+            ),
 
-            # Selektor dla sensora temperatury
+            # Temperatura
             vol.Required("temp_sensor"): EntitySelector(
                 EntitySelectorConfig(domain="sensor", device_class="temperature")
             ),
             vol.Required("min_temp", default=15): NumberSelector(
                 NumberSelectorConfig(min=0, max=50, unit_of_measurement="°C", mode=NumberSelectorMode.BOX)
             ),
+            vol.Required("max_temp", default=30): NumberSelector(
+                NumberSelectorConfig(min=0, max=50, unit_of_measurement="°C", mode=NumberSelectorMode.BOX)
+            ),
             
-            # Selektor dla sensora wilgotności powietrza
+            # Wilgotność powietrza
             vol.Required("humi_sensor"): EntitySelector(
                 EntitySelectorConfig(domain="sensor", device_class="humidity")
             ),
             vol.Required("min_humi", default=30): NumberSelector(
+                NumberSelectorConfig(min=0, max=100, mode=NumberSelectorMode.SLIDER)
+            ),
+            vol.Required("max_humi", default=80): NumberSelector(
                 NumberSelectorConfig(min=0, max=100, mode=NumberSelectorMode.SLIDER)
             ),
         })
@@ -64,12 +73,14 @@ class MKPlantOptionsFlowHandler(config_entries.OptionsFlow):
         if user_input is not None:
             return self.async_create_entry(title="", data=user_input)
 
-        # Formularz edycji (używamy danych z entry.data jako domyślnych)
         return self.async_show_form(
             step_id="init",
             data_schema=vol.Schema({
-                vol.Required("min_moisture", default=self.config_entry.data.get("min_moisture")): int,
-                vol.Required("max_moisture", default=self.config_entry.data.get("max_moisture")): int,
-                # Tutaj dodaj resztę pól, które chcesz edytować
+                vol.Required("min_moisture", default=self.config_entry.data.get("min_moisture", 20)): int,
+                vol.Required("max_moisture", default=self.config_entry.data.get("max_moisture", 60)): int,
+                vol.Required("min_temp", default=self.config_entry.data.get("min_temp", 15)): int,
+                vol.Required("max_temp", default=self.config_entry.data.get("max_temp", 30)): int,
+                vol.Required("min_humi", default=self.config_entry.data.get("min_humi", 30)): int,
+                vol.Required("max_humi", default=self.config_entry.data.get("max_humi", 80)): int,
             })
-        )    
+        )

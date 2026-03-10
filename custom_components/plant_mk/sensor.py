@@ -5,17 +5,17 @@ Author: Marek (KalmarekM)
 """
 from homeassistant.components.sensor import SensorEntity, SensorDeviceClass, SensorStateClass # type: ignore
 from homeassistant.const import PERCENTAGE, UnitOfTemperature # type: ignore
+from .const import DOMAIN
 
 async def async_setup_entry(hass, entry, async_add_entities):
     """Set up sensors for a specific plant entry."""
     config = entry.data
-    plant_name = config["plant_name"]
+    plant_name = config.get("plant_name", "Unknown Plant")
     
-    # We create 3 sensors for this specific plant
     sensors = [
-        MKPlantNumericSensor(hass, plant_name, "moisture", config["moisture_sensor"], config["min_moisture"], config["max_moisture"]),
-        MKPlantNumericSensor(hass, plant_name, "temperature", config["temp_sensor"], config["min_temp"], config["max_temp"]),
-        MKPlantNumericSensor(hass, plant_name, "humidity", config["humi_sensor"], config["min_humi"], config["max_humi"]),
+        MKPlantNumericSensor(hass, plant_name, "moisture", config.get("moisture_sensor"), config.get("min_moisture", 20), config.get("max_moisture", 60)),
+        MKPlantNumericSensor(hass, plant_name, "temperature", config.get("temp_sensor"), config.get("min_temp", 15), config.get("max_temp", 30)),
+        MKPlantNumericSensor(hass, plant_name, "humidity", config.get("humi_sensor"), config.get("min_humi", 30), config.get("max_humi", 80)),
     ]
     
     async_add_entities(sensors)
@@ -31,9 +31,8 @@ class MKPlantNumericSensor(SensorEntity):
         self._source_id = source_id
         self._min_val = min_val
         self._max_val = max_val
-        self._state = None
+        self._attr_unique_id = f"{plant_name}_{param_type}"
 
-        # Set units and device classes based on parameter type
         if param_type == "temperature":
             self._attr_native_unit_of_measurement = UnitOfTemperature.CELSIUS
             self._attr_device_class = SensorDeviceClass.TEMPERATURE
@@ -45,20 +44,22 @@ class MKPlantNumericSensor(SensorEntity):
 
     @property
     def name(self):
-        """Return the name of the sensor."""
         return f"{self._plant_name} {self._param_type.capitalize()}"
 
     @property
     def native_value(self):
-        """Return the current value from the source sensor."""
+        if not self._source_id:
+            return None
         source_state = self.hass.states.get(self._source_id)
         if source_state and source_state.state not in ["unknown", "unavailable"]:
-            return float(source_state.state)
+            try:
+                return float(source_state.state)
+            except ValueError:
+                return None
         return None
 
     @property
     def extra_state_attributes(self):
-        """Return min/max thresholds as attributes for the JS card."""
         return {
             "min_threshold": self._min_val,
             "max_threshold": self._max_val,
@@ -67,9 +68,8 @@ class MKPlantNumericSensor(SensorEntity):
     
     @property
     def device_info(self):
-        """Return information about the device."""
         return {
-            "identifiers": {(DOMAIN, self._plant_name)}, # type: ignore
+            "identifiers": {(DOMAIN, self._plant_name)},
             "name": self._plant_name,
             "manufacturer": "Marek Custom",
             "model": "Plant System v1",
