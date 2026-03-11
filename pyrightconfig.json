@@ -1,0 +1,11 @@
+{
+  "extraPaths": [
+    "D:/HA_Lib_Core"
+  ],
+  "venvPath": ".",
+  "venv": ".venv312",
+  "pythonVersion": "3.12",
+  "typeCheckingMode": "basic",
+  "reportMissingImports": true,
+  "reportMissingModuleSource": false
+}

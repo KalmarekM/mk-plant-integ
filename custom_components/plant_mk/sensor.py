@@ -3,8 +3,8 @@ MK Plant System Integration.
 License: MIT
 Author: Marek (KalmarekM)
 """
-from homeassistant.components.sensor import SensorEntity, SensorDeviceClass, SensorStateClass # type: ignore
-from homeassistant.const import PERCENTAGE, UnitOfTemperature # type: ignore
+from homeassistant.components.sensor import SensorEntity, SensorDeviceClass, SensorStateClass
+from homeassistant.const import PERCENTAGE, UnitOfTemperature
 from .const import DOMAIN
 
 async def async_setup_entry(hass, entry, async_add_entities):

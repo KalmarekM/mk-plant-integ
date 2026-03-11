@@ -1,0 +1,12 @@
+{
+  "python.defaultInterpreterPath": "${workspaceFolder}/.venv312/Scripts/python.exe",
+  "python.testing.pytestEnabled": true,
+  "python.testing.unittestEnabled": false,
+  "python.testing.pytestPath": "${workspaceFolder}/.venv312/Scripts/python.exe",
+  "python.testing.pytestArgs": [
+    "-m",
+    "pytest",
+    "tests"
+  ],
+  "python.envFile": "${workspaceFolder}/.env"
+}

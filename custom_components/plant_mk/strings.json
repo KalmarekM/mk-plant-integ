@@ -43,7 +43,7 @@
     },
     "step": {
       "init": {
-        "title": "Alert thresholds",
+        "title": "Configuration",
         "data": {
           "moisture_sensor": "Soil moisture sensor",
           "temp_sensor": "Temperature sensor",

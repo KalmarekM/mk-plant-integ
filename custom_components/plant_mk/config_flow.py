@@ -1,9 +1,9 @@
-import voluptuous as vol # type: ignore
-from homeassistant import config_entries # type: ignore
-from homeassistant.core import callback # type: ignore
+import voluptuous as vol
+from homeassistant import config_entries
+from homeassistant.core import callback
 
 try:
-    from homeassistant.helpers.selector import ( # type: ignore
+    from homeassistant.helpers.selector import (
         EntitySelector,
         EntitySelectorConfig,
         NumberSelector,
@@ -24,6 +24,13 @@ def _num_default(defaults, key, fallback):
         return float(value)
     except (TypeError, ValueError):
         return fallback
+
+
+def _entry_defaults(config_entry):
+    """Return editable defaults for the options flow."""
+    defaults = dict(config_entry.data)
+    defaults.update(config_entry.options)
+    return defaults
 
 def plant_schema(defaults, use_selectors=False):
     """Build threshold schema for setup and options flows."""
@@ -108,7 +115,24 @@ class MKPlantOptionsFlowHandler(config_entries.OptionsFlow):
 
     def _options_schema(self):
         """Build options schema with sensor bindings and thresholds."""
-        defaults = self._config_entry.data
+        defaults = _entry_defaults(self._config_entry)
+
+        if HAS_SELECTORS:
+            return vol.Schema({
+                vol.Required(
+                    "moisture_sensor",
+                    default=defaults.get("moisture_sensor", ""),
+                ): EntitySelector(EntitySelectorConfig(domain="sensor")),
+                vol.Required(
+                    "temp_sensor",
+                    default=defaults.get("temp_sensor", ""),
+                ): EntitySelector(EntitySelectorConfig(domain="sensor")),
+                vol.Required(
+                    "humi_sensor",
+                    default=defaults.get("humi_sensor", ""),
+                ): EntitySelector(EntitySelectorConfig(domain="sensor")),
+            }).extend(plant_schema(defaults, use_selectors=True).schema)
+
         return vol.Schema({
             vol.Required("moisture_sensor", default=defaults.get("moisture_sensor", "")): str,
             vol.Required("temp_sensor", default=defaults.get("temp_sensor", "")): str,

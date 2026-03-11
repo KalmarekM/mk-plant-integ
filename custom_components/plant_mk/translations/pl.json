@@ -43,7 +43,7 @@
     },
     "step": {
       "init": {
-        "title": "Progi alarmowe",
+        "title": "Konfiguracja",
         "data": {
           "moisture_sensor": "Sensor wilgotności gleby",
           "temp_sensor": "Sensor temperatury",

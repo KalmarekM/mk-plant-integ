@@ -1,0 +1,49 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Pytest: Debug all tests",
+      "type": "debugpy",
+      "request": "launch",
+      "python": "${workspaceFolder}/.venv312/Scripts/python.exe",
+      "module": "pytest",
+      "args": [
+        "tests",
+        "-q"
+      ],
+      "console": "integratedTerminal",
+      "cwd": "${workspaceFolder}",
+      "justMyCode": false
+    },
+    {
+      "name": "Pytest: Debug current file",
+      "type": "debugpy",
+      "request": "launch",
+      "python": "${workspaceFolder}/.venv312/Scripts/python.exe",
+      "module": "pytest",
+      "args": [
+        "${file}",
+        "-q"
+      ],
+      "console": "integratedTerminal",
+      "cwd": "${workspaceFolder}",
+      "justMyCode": false
+    },
+    {
+      "name": "Pytest: Debug current test (cursor)",
+      "type": "debugpy",
+      "request": "launch",
+      "python": "${workspaceFolder}/.venv312/Scripts/python.exe",
+      "module": "pytest",
+      "args": [
+        "${file}",
+        "-q",
+        "-k",
+        "${selectedText}"
+      ],
+      "console": "integratedTerminal",
+      "cwd": "${workspaceFolder}",
+      "justMyCode": false
+    }
+  ]
+}
