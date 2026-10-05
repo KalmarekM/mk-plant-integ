@@ -41,5 +41,9 @@ def pytest_runtest_setup() -> None:
 
 @pytest.fixture
 def event_loop_policy(socket_enabled: None) -> asyncio.AbstractEventLoopPolicy:
-    """Provide an event loop policy with sockets enabled."""
+    """Provide an event loop policy with sockets enabled.
+
+    Required by pytest-asyncio (it requests this fixture before creating the
+    event loop) so that Windows socketpair is not blocked by pytest-socket.
+    """
     return asyncio.get_event_loop_policy()

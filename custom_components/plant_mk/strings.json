@@ -10,6 +10,17 @@
       "humidity": {
         "name": "Humidity"
       }
+    },
+    "binary_sensor": {
+      "moisture_problem": {
+        "name": "Moisture problem"
+      },
+      "temperature_problem": {
+        "name": "Temperature problem"
+      },
+      "humidity_problem": {
+        "name": "Humidity problem"
+      }
     }
   },
   "config": {

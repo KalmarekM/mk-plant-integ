@@ -10,6 +10,17 @@
       "humidity": {
         "name": "Wilgotność"
       }
+    },
+    "binary_sensor": {
+      "moisture_problem": {
+        "name": "Problem z wilgotnością gleby"
+      },
+      "temperature_problem": {
+        "name": "Problem z temperaturą"
+      },
+      "humidity_problem": {
+        "name": "Problem z wilgotnością powietrza"
+      }
     }
   },
   "config": {

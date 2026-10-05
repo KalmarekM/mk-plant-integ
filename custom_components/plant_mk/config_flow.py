@@ -102,20 +102,23 @@ class MKPlantConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 vol.Required("humi_sensor"): str,
             }).extend(plant_schema({}, use_selectors=False).schema)
 
+        if user_input:
+            # Keep the values the user typed when re-showing the form after errors.
+            full_schema = self.add_suggested_values_to_schema(full_schema, user_input)
+
         return self.async_show_form(step_id="user", data_schema=full_schema, errors=errors)
 
     @staticmethod
     @callback
     def async_get_options_flow(config_entry):
-        return MKPlantOptionsFlowHandler(config_entry)
+        return MKPlantOptionsFlowHandler()
 
 class MKPlantOptionsFlowHandler(config_entries.OptionsFlow):
-    def __init__(self, config_entry):
-        self._config_entry = config_entry
+    """Options flow storing editable settings in entry.options."""
 
     def _options_schema(self):
         """Build options schema with sensor bindings and thresholds."""
-        defaults = _entry_defaults(self._config_entry)
+        defaults = _entry_defaults(self.config_entry)
 
         if HAS_SELECTORS:
             return vol.Schema({
@@ -143,14 +146,11 @@ class MKPlantOptionsFlowHandler(config_entries.OptionsFlow):
         if user_input is not None:
             errors = validate_thresholds(user_input)
             if not errors:
-                # Persist thresholds in entry.data to keep entity setup logic simple.
-                new_data = dict(self._config_entry.data)
-                new_data.update(user_input)
-                self.hass.config_entries.async_update_entry(self._config_entry, data=new_data)
-                return self.async_create_entry(title="", data={})
+                # Options live in entry.options; the update listener reloads the entry.
+                return self.async_create_entry(title="", data=user_input)
             return self.async_show_form(
                 step_id="init",
-                data_schema=self._options_schema(),
+                data_schema=self.add_suggested_values_to_schema(self._options_schema(), user_input),
                 errors=errors,
             )
 

@@ -1,50 +1,88 @@
 """
-MK Plant System Integration.
+MK Plant System Integration - mirrored plant sensors.
 License: MIT
 Author: Marek (KalmarekM)
 """
-from homeassistant.components.sensor import SensorEntity, SensorDeviceClass, SensorStateClass
+from homeassistant.components.sensor import SensorDeviceClass, SensorEntity, SensorStateClass
 from homeassistant.const import PERCENTAGE, UnitOfTemperature
-from .const import DOMAIN
+from homeassistant.core import callback
+from homeassistant.helpers.device_registry import DeviceInfo
+from homeassistant.helpers.event import async_track_state_change_event
+
+from .const import DOMAIN, PARAM_CONFIG
+
 
 async def async_setup_entry(hass, entry, async_add_entities):
-    # Pobieramy dane z entry.data (zawsze aktualne po poprawce w config_flow)
-    config = entry.data
+    """Set up mirrored plant sensors from a config entry."""
+    # Options override data, so the merged config is always current after a reload.
+    config = {**entry.data, **entry.options}
     plant_name = config.get("plant_name", "Plant")
 
     sensors = [
-        MKPlantNumericSensor(hass, plant_name, "moisture", config.get("moisture_sensor"), config.get("min_moisture"), config.get("max_moisture")),
-        MKPlantNumericSensor(hass, plant_name, "temperature", config.get("temp_sensor"), config.get("min_temp"), config.get("max_temp")),
-        MKPlantNumericSensor(hass, plant_name, "humidity", config.get("humi_sensor"), config.get("min_humi"), config.get("max_humi")),
+        MKPlantNumericSensor(
+            entry,
+            plant_name,
+            param_type,
+            config.get(source_key),
+            config.get(min_key),
+            config.get(max_key),
+        )
+        for param_type, (source_key, min_key, max_key) in PARAM_CONFIG.items()
     ]
     async_add_entities(sensors)
 
+
 class MKPlantNumericSensor(SensorEntity):
-    def __init__(self, hass, plant_name, param_type, source_id, min_val, max_val):
-        self.hass = hass
-        self._plant_name = plant_name
-        self._param_type = param_type
+    """Sensor mirroring the numeric value of a configured source sensor."""
+
+    _attr_should_poll = False
+    _attr_has_entity_name = True
+    _attr_state_class = SensorStateClass.MEASUREMENT
+
+    def __init__(self, entry, plant_name, param_type, source_id, min_val, max_val):
+        """Initialize the mirrored sensor."""
         self._source_id = source_id
         self._min_val = min_val
         self._max_val = max_val
-        self._attr_unique_id = f"{plant_name}_{param_type}"
-        self._attr_has_entity_name = True
+        # Unique ID is tied to the config entry: renaming the plant is safe and
+        # two plants may share the same display name without collisions.
+        self._attr_unique_id = f"{entry.entry_id}_{param_type}"
         self._attr_translation_key = param_type
 
         if param_type == "temperature":
             self._attr_device_class = SensorDeviceClass.TEMPERATURE
             self._attr_native_unit_of_measurement = UnitOfTemperature.CELSIUS
         elif param_type == "moisture":
-            self._attr_device_class = SensorDeviceClass.MOISTURE # Poprawione!
+            self._attr_device_class = SensorDeviceClass.MOISTURE
             self._attr_native_unit_of_measurement = PERCENTAGE
         else:
             self._attr_device_class = SensorDeviceClass.HUMIDITY
             self._attr_native_unit_of_measurement = PERCENTAGE
 
-        self._attr_state_class = SensorStateClass.MEASUREMENT
+        self._attr_device_info = DeviceInfo(
+            identifiers={(DOMAIN, entry.entry_id)},
+            name=plant_name,
+            manufacturer="Marek Custom",
+            model="Plant System v1",
+        )
+
+    async def async_added_to_hass(self):
+        """Mirror source updates immediately instead of polling."""
+        if self._source_id:
+            self.async_on_remove(
+                async_track_state_change_event(
+                    self.hass, [self._source_id], self._handle_source_update
+                )
+            )
+
+    @callback
+    def _handle_source_update(self, event):
+        """Write the new state when the source sensor changes."""
+        self.async_write_ha_state()
 
     @property
     def native_value(self):
+        """Return the current numeric value of the source sensor."""
         if not self._source_id:
             return None
         source_state = self.hass.states.get(self._source_id)
@@ -57,17 +95,9 @@ class MKPlantNumericSensor(SensorEntity):
 
     @property
     def extra_state_attributes(self):
+        """Expose thresholds and the source entity for transparency."""
         return {
             "min_threshold": self._min_val,
             "max_threshold": self._max_val,
-            "source_entity": self._source_id
-        }
-    
-    @property
-    def device_info(self):
-        return {
-            "identifiers": {(DOMAIN, self._plant_name)},
-            "name": self._plant_name,
-            "manufacturer": "Marek Custom",
-            "model": "Plant System v1",
+            "source_entity": self._source_id,
         }

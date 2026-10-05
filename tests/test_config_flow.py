@@ -8,11 +8,7 @@ from pathlib import Path
 import pytest
 from homeassistant import config_entries
 from homeassistant.data_entry_flow import FlowResultType
-
-try:
-    from pytest_homeassistant_custom_component.common import MockConfigEntry
-except ImportError:
-    from tests.common import MockConfigEntry
+from pytest_homeassistant_custom_component.common import MockConfigEntry
 
 from custom_components.plant_mk.const import DOMAIN
 
@@ -92,7 +88,9 @@ async def test_options_flow_updates_sources_and_thresholds(hass) -> None:
     await hass.async_block_till_done()
 
     assert result["type"] is FlowResultType.CREATE_ENTRY
-    assert entry.data == {**TEST_USER_INPUT, **UPDATED_OPTIONS_INPUT}
+    # Source data stays untouched; editable settings live in entry.options.
+    assert entry.data == TEST_USER_INPUT
+    assert entry.options == UPDATED_OPTIONS_INPUT
 
 
 @pytest.mark.asyncio
