@@ -1,10 +1,10 @@
 # MK Plant System
 
-Niestandardowa integracja [Home Assistant](https://www.home-assistant.io/) (HACS) do monitorowania roślin domowych. Dla każdej rośliny tworzone jest osobne urządzenie, które grupuje lustrzane odczyty z czujników fizycznych oraz binarne sensory alarmowe informujące o wyjściu parametrów poza zadane progi.
+Niestandardowa integracja [Home Assistant](https://www.home-assistant.io/) (HACS) do monitorowania roślin domowych. Dla każdej rośliny tworzone jest osobne urządzenie, które grupuje [lustrzane](#lustro-sensora-źródłowego) odczyty z czujników fizycznych oraz binarne sensory alarmowe informujące o wyjściu parametrów poza zadane progi.
 
 ## Funkcje
 
-- **Lustrzane sensory** — wilgotność gleby, temperatura i wilgotność powietrza odzwierciedlają wartości wskazanych sensorów źródłowych i są aktualizowane natychmiast po każdej zmianie źródła (bez odpytywania).
+- **[Lustrzane sensory](#lustro-sensora-źródłowego)** — wilgotność gleby, temperatura i wilgotność powietrza odzwierciedlają wartości wskazanych sensorów źródłowych i są aktualizowane natychmiast po każdej zmianie źródła (bez odpytywania).
 - **Binarne sensory „problem”** — włączają się (`on`), gdy wartość parametru wyjdzie poza skonfigurowany zakres min–max. Idealne jako wyzwalacz automatyzacji.
 - **Konfiguracja w 100% z poziomu UI** — config flow z selektorami encji i suwakami progów; options flow pozwala później zmienić sensory źródłowe i progi bez usuwania rośliny.
 - **Walidacja zakresów** — formularz odrzuca konfigurację, w której minimum jest większe niż maksimum.
@@ -41,9 +41,9 @@ Dla rośliny o nazwie „Monstera” powstaje urządzenie z encjami:
 
 | Encja | Opis |
 | --- | --- |
-| `sensor.monstera_moisture` | Wilgotność gleby (lustro źródła, %) |
-| `sensor.monstera_temperature` | Temperatura (lustro źródła, °C) |
-| `sensor.monstera_humidity` | Wilgotność powietrza (lustro źródła, %) |
+| `sensor.monstera_moisture` | Wilgotność gleby ([lustro](#lustro-sensora-źródłowego) źródła, %) |
+| `sensor.monstera_temperature` | Temperatura ([lustro](#lustro-sensora-źródłowego) źródła, °C) |
+| `sensor.monstera_humidity` | Wilgotność powietrza ([lustro](#lustro-sensora-źródłowego) źródła, %) |
 | `binary_sensor.monstera_moisture_problem` | `on`, gdy wilgotność gleby poza zakresem |
 | `binary_sensor.monstera_temperature_problem` | `on`, gdy temperatura poza zakresem |
 | `binary_sensor.monstera_humidity_problem` | `on`, gdy wilgotność powietrza poza zakresem |
@@ -97,6 +97,26 @@ actions:
 - Options flow (edycja sensorów źródłowych i progów).
 - Tłumaczenia PL/EN.
 - Testy config flow i options flow.
+
+## Lustro sensora źródłowego
+
+**Lustro** (ang. *mirror*) to sensor, który **nie wykonuje własnego pomiaru — odzwierciedla wartość innej, wskazanej encji źródłowej** w relacji 1:1. Sensor źródłowy wybierasz w konfiguracji (np. `sensor.soil_moisture_a` z integracji ESPHome, Xiaomi MiFlora czy Zigbee2MQTT), a powstała encja (np. `sensor.monstera_moisture`) zawsze pokazuje dokładnie tę samą wartość co źródło:
+
+| Sensor źródłowy | Lustro |
+| --- | --- |
+| `sensor.soil_moisture_a` = `25` | `sensor.monstera_moisture` = `25.0` |
+| `sensor.soil_moisture_a` = `unavailable` | `sensor.monstera_moisture` = `unknown` |
+
+Jak to działa:
+
+- Lustro **nie odpytuje** urządzenia — nasłuchuje zdarzeń zmiany stanu encji źródłowej (`async_track_state_change_event`), więc aktualizuje się natychmiast po każdej zmianie źródła.
+- Gdy źródło jest `unknown` lub `unavailable`, lustro przyjmuje stan `unknown`.
+
+Po co stosować lustro, skoro wartość jest identyczna jak w źródle? Integracja dokłada na lustrze **logikę rośliny**, której nie ma sam fizyczny sensor:
+
+- przypisuje encję do urządzenia (np. „Monstera”), dzięki czemu wszystkie jej encje są pogrupowane w UI,
+- dodaje atrybuty `min_threshold` i `max_threshold` z progami min/max,
+- na podstawie progów steruje binarnym sensorem `*_problem`, który może wyzwalać automatyzacje.
 
 ## Licencja
 
