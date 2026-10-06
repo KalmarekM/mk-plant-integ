@@ -8,6 +8,8 @@ Niestandardowa integracja [Home Assistant](https://www.home-assistant.io/) (HACS
 
 - **[Lustrzane sensory](#lustro-sensora-źródłowego)** — wilgotność gleby, temperatura i wilgotność powietrza odzwierciedlają wartości wskazanych sensorów źródłowych i są aktualizowane natychmiast po każdej zmianie źródła (bez odpytywania).
 - **Binarne sensory „problem”** — włączają się (`on`), gdy wartość parametru wyjdzie poza skonfigurowany zakres min–max. Idealne jako wyzwalacz automatyzacji.
+- **Opis rośliny (opcjonalny)** — dowolny tekst markdown pokazywany na sensorze „O roślinie” i renderowany kartą Markdown w Lovelace.
+- **Zdjęcie rośliny (opcjonalne)** — prześlij obraz; jest serwowany przez dedykowaną encję `image` na stronie urządzenia.
 - **Konfiguracja w 100% z poziomu UI** — config flow z selektorami encji i suwakami progów; options flow pozwala później zmienić sensory źródłowe i progi bez usuwania rośliny.
 - **Walidacja zakresów** — formularz odrzuca konfigurację, w której minimum jest większe niż maksimum.
 - **Jeden wpis konfiguracyjny = jedna roślina** — można dodać dowolną liczbę roślin, każda z własnymi progami.
@@ -49,8 +51,24 @@ Dla rośliny o nazwie „Monstera” powstaje urządzenie z encjami:
 | `binary_sensor.monstera_moisture_problem` | `on`, gdy wilgotność gleby poza zakresem |
 | `binary_sensor.monstera_temperature_problem` | `on`, gdy temperatura poza zakresem |
 | `binary_sensor.monstera_humidity_problem` | `on`, gdy wilgotność powietrza poza zakresem |
+| `sensor.monstera_about` | Opcjonalny opis; pełny markdown w atrybucie `description` |
+| `image.monstera_photo` | Opcjonalne zdjęcie rośliny (tylko po przesłaniu) |
 
-Każda encja udostępnia atrybuty `min_threshold`, `max_threshold` i `source_entity`.
+Każdy lustrzany/problemowy sensor udostępnia atrybuty `min_threshold`, `max_threshold` i `source_entity`.
+
+### Opis rośliny
+
+Opcjonalny opis obsługuje **markdown** i jest przechowywany w atrybucie `description` encji `sensor.<nazwa>_about`. Aby ładnie wyświetlić go na pulpicie, dodaj kartę Markdown:
+
+```yaml
+type: markdown
+title: O roślinie
+content: "{{ state_attr('sensor.monstera_about', 'description') }}"
+```
+
+### Zdjęcie rośliny
+
+Wybierz zdjęcie w config/options flow (JPEG/PNG/GIF/WebP, maks. 5 MB). Jest zapisywane w `config/plant_mk/images/` i serwowane przez uwierzytelnioną encję `image` — nie jest publicznie dostępne przez `/local/`.
 
 ## Przykładowa automatyzacja
 
@@ -76,6 +94,13 @@ actions:
 ```
 
 ## Dziennik zmian
+
+### [1.2.0] — 2026-10-06
+
+#### Dodane
+- Opcjonalny **opis rośliny** (markdown) na nowej encji `sensor.<nazwa>_about`; pełny tekst w atrybucie `description`.
+- Opcjonalne **zdjęcie rośliny** przesyłane w config/options flow, serwowane przez nową encję `image.<nazwa>_photo`.
+- Testy funkcji opisu i zdjęcia.
 
 ### [1.1.0] — 2026-10-05
 

@@ -9,6 +9,9 @@
       },
       "humidity": {
         "name": "Humidity"
+      },
+      "about": {
+        "name": "About"
       }
     },
     "binary_sensor": {
@@ -21,18 +24,28 @@
       "humidity_problem": {
         "name": "Humidity problem"
       }
+    },
+    "image": {
+      "photo": {
+        "name": "Photo"
+      }
     }
   },
   "config": {
     "error": {
       "invalid_moisture_range": "Minimum moisture cannot be greater than maximum.",
       "invalid_temp_range": "Minimum temperature cannot be greater than maximum.",
-      "invalid_humi_range": "Minimum humidity cannot be greater than maximum."
+      "invalid_humi_range": "Minimum humidity cannot be greater than maximum.",
+      "description_too_long": "Description is too long.",
+      "invalid_image": "The selected file is not a valid image or is too large (max 5 MB).",
+      "image_upload_failed": "The image could not be uploaded."
     },
     "step": {
       "user": {
         "data": {
           "plant_name": "Plant name",
+          "plant_description": "Description (optional, markdown)",
+          "plant_image": "Photo (optional)",
           "moisture_sensor": "Soil moisture sensor",
           "min_moisture": "Minimum moisture (%)",
           "max_moisture": "Maximum moisture (%)",
@@ -50,13 +63,18 @@
     "error": {
       "invalid_moisture_range": "Minimum moisture cannot be greater than maximum.",
       "invalid_temp_range": "Minimum temperature cannot be greater than maximum.",
-      "invalid_humi_range": "Minimum humidity cannot be greater than maximum."
+      "invalid_humi_range": "Minimum humidity cannot be greater than maximum.",
+      "description_too_long": "Description is too long.",
+      "invalid_image": "The selected file is not a valid image or is too large (max 5 MB).",
+      "image_upload_failed": "The image could not be uploaded."
     },
     "step": {
       "init": {
         "title": "Configuration",
         "data": {
           "moisture_sensor": "Soil moisture sensor",
+          "plant_description": "Description (optional, markdown)",
+          "plant_image": "Photo (optional)",
           "temp_sensor": "Temperature sensor",
           "humi_sensor": "Air humidity sensor",
           "min_moisture": "Minimum moisture (%)",

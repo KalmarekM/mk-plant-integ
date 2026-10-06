@@ -8,6 +8,8 @@ A custom [Home Assistant](https://www.home-assistant.io/) integration (HACS) for
 
 - **[Mirrored sensors](#mirrored-source-sensor)** — soil moisture, temperature, and air humidity mirror the values of the source sensors you pick, updated instantly on every source change (no polling).
 - **Binary "problem" sensors** — turn `on` when a parameter leaves its configured min–max range. A ready-made trigger for automations.
+- **Plant description (optional)** — free-form markdown text shown on an "About" sensor and rendered with a Lovelace markdown card.
+- **Plant photo (optional)** — upload a picture; it is served by a dedicated `image` entity on the device page.
 - **100% UI configuration** — config flow with entity selectors and threshold sliders; the options flow lets you change source sensors and thresholds later without deleting the plant.
 - **Range validation** — the form rejects a configuration where the minimum is greater than the maximum.
 - **One config entry = one plant** — add any number of plants, each with its own thresholds.
@@ -49,8 +51,24 @@ For a plant named "Monstera", a device is created with the following entities:
 | `binary_sensor.monstera_moisture_problem` | `on` when soil moisture is out of range |
 | `binary_sensor.monstera_temperature_problem` | `on` when temperature is out of range |
 | `binary_sensor.monstera_humidity_problem` | `on` when air humidity is out of range |
+| `sensor.monstera_about` | Optional description; full markdown in the `description` attribute |
+| `image.monstera_photo` | Optional plant photo (only when uploaded) |
 
-Every entity exposes the `min_threshold`, `max_threshold`, and `source_entity` attributes.
+Every mirrored/problem entity exposes the `min_threshold`, `max_threshold`, and `source_entity` attributes.
+
+### Plant description
+
+The optional description supports **markdown** and is stored in the `description` attribute of `sensor.<name>_about`. To render it nicely on a dashboard, add a markdown card:
+
+```yaml
+type: markdown
+title: About the plant
+content: "{{ state_attr('sensor.monstera_about', 'description') }}"
+```
+
+### Plant photo
+
+Pick a photo in the config/options flow (JPEG/PNG/GIF/WebP, max 5 MB). It is stored under `config/plant_mk/images/` and served through an authenticated `image` entity — it is not exposed publicly via `/local/`.
 
 ## Example automation
 
@@ -76,6 +94,13 @@ actions:
 ```
 
 ## Changelog
+
+### [1.2.0] — 2026-10-06
+
+#### Added
+- Optional **plant description** (markdown) on a new `sensor.<name>_about` entity; full text in the `description` attribute.
+- Optional **plant photo** uploaded in the config/options flow, served by a new `image.<name>_photo` entity.
+- Tests for the description and photo features.
 
 ### [1.1.0] — 2026-10-05
 

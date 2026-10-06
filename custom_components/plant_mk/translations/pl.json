@@ -9,6 +9,9 @@
       },
       "humidity": {
         "name": "Wilgotność"
+      },
+      "about": {
+        "name": "O roślinie"
       }
     },
     "binary_sensor": {
@@ -21,18 +24,28 @@
       "humidity_problem": {
         "name": "Problem z wilgotnością powietrza"
       }
+    },
+    "image": {
+      "photo": {
+        "name": "Zdjęcie"
+      }
     }
   },
   "config": {
     "error": {
       "invalid_moisture_range": "Minimalna wilgotność nie może być większa niż maksymalna.",
       "invalid_temp_range": "Minimalna temperatura nie może być większa niż maksymalna.",
-      "invalid_humi_range": "Minimalna wilgotność powietrza nie może być większa niż maksymalna."
+      "invalid_humi_range": "Minimalna wilgotność powietrza nie może być większa niż maksymalna.",
+      "description_too_long": "Opis jest zbyt długi.",
+      "invalid_image": "Wybrany plik nie jest prawidłowym obrazem lub jest za duży (maks. 5 MB).",
+      "image_upload_failed": "Nie udało się przesłać zdjęcia."
     },
     "step": {
       "user": {
         "data": {
           "plant_name": "Nazwa rośliny",
+          "plant_description": "Opis (opcjonalny, markdown)",
+          "plant_image": "Zdjęcie (opcjonalne)",
           "moisture_sensor": "Sensor wilgotności gleby",
           "min_moisture": "Minimalna wilgotność (%)",
           "max_moisture": "Maksymalna wilgotność (%)",
@@ -50,13 +63,18 @@
     "error": {
       "invalid_moisture_range": "Minimalna wilgotność nie może być większa niż maksymalna.",
       "invalid_temp_range": "Minimalna temperatura nie może być większa niż maksymalna.",
-      "invalid_humi_range": "Minimalna wilgotność powietrza nie może być większa niż maksymalna."
+      "invalid_humi_range": "Minimalna wilgotność powietrza nie może być większa niż maksymalna.",
+      "description_too_long": "Opis jest zbyt długi.",
+      "invalid_image": "Wybrany plik nie jest prawidłowym obrazem lub jest za duży (maks. 5 MB).",
+      "image_upload_failed": "Nie udało się przesłać zdjęcia."
     },
     "step": {
       "init": {
         "title": "Konfiguracja",
         "data": {
           "moisture_sensor": "Sensor wilgotności gleby",
+          "plant_description": "Opis (opcjonalny, markdown)",
+          "plant_image": "Zdjęcie (opcjonalne)",
           "temp_sensor": "Sensor temperatury",
           "humi_sensor": "Sensor wilgotności powietrza",
           "min_moisture": "Minimalna wilgotność (%)",

@@ -60,7 +60,8 @@ async def test_user_flow_creates_entry(hass) -> None:
 
     assert result["type"] is FlowResultType.CREATE_ENTRY
     assert result["title"] == TEST_USER_INPUT["plant_name"]
-    assert result["data"] == TEST_USER_INPUT
+    # Optional description defaults to an empty string; no photo is stored.
+    assert result["data"] == {**TEST_USER_INPUT, "plant_description": ""}
 
 
 @pytest.mark.asyncio
@@ -90,7 +91,8 @@ async def test_options_flow_updates_sources_and_thresholds(hass) -> None:
     assert result["type"] is FlowResultType.CREATE_ENTRY
     # Source data stays untouched; editable settings live in entry.options.
     assert entry.data == TEST_USER_INPUT
-    assert entry.options == UPDATED_OPTIONS_INPUT
+    # Optional description defaults to an empty string; no photo is stored.
+    assert dict(entry.options) == {**UPDATED_OPTIONS_INPUT, "plant_description": ""}
 
 
 @pytest.mark.asyncio

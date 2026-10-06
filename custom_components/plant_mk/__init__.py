@@ -1,7 +1,7 @@
 """MK Plant System integration."""
 from homeassistant.const import Platform
 
-PLATFORMS = [Platform.SENSOR, Platform.BINARY_SENSOR]
+PLATFORMS = [Platform.SENSOR, Platform.BINARY_SENSOR, Platform.IMAGE]
 
 
 async def async_setup_entry(hass, entry):
