@@ -13,6 +13,7 @@ PARAM_CONFIG = {
 CONF_PLANT_DESCRIPTION = "plant_description"
 CONF_PLANT_IMAGE = "plant_image"  # upload file_id (transient, config flow only)
 CONF_PLANT_IMAGE_PATH = "plant_image_path"  # persisted absolute path
+CONF_REMOVE_PHOTO = "remove_photo"  # options flow checkbox to delete the photo
 
 # Description limits (markdown content shown via a Lovelace markdown card).
 DESCRIPTION_MAX_LENGTH = 2000

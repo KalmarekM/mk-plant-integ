@@ -68,7 +68,7 @@ content: "{{ state_attr('sensor.monstera_about', 'description') }}"
 
 ### Plant photo
 
-Pick a photo in the config/options flow (JPEG/PNG/GIF/WebP, max 5 MB). It is stored under `config/plant_mk/images/` and served through an authenticated `image` entity — it is not exposed publicly via `/local/`.
+Pick a photo in the config/options flow (JPEG/PNG/GIF/WebP, max 5 MB). It is stored under `config/plant_mk/images/` and served through an authenticated `image` entity — it is not exposed publicly via `/local/`. The options flow shows the currently attached photo; choose a new file to replace it or tick **Remove photo** to delete it (the leftover `image` entity stays unavailable in the entity registry and can be deleted there).
 
 ## Example automation
 
@@ -94,6 +94,15 @@ actions:
 ```
 
 ## Changelog
+
+### [1.2.1] — 2026-10-12
+
+#### Added
+- The options flow now shows the **currently attached photo** filename and offers a **Remove photo** checkbox; removing deletes the stored file.
+
+#### Fixed
+- Photo files are now named with a unique flow id at creation, avoiding collisions between plants sharing the same name.
+- Replacing a photo deletes the previously stored file (no orphaned files left on disk).
 
 ### [1.2.0] — 2026-10-06
 

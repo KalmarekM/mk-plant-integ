@@ -2,6 +2,8 @@ import voluptuous as vol
 from homeassistant import config_entries
 from homeassistant.core import callback
 
+from pathlib import Path
+
 try:
     from homeassistant.helpers.selector import (
         EntitySelector,
@@ -22,10 +24,11 @@ from .const import (
     CONF_PLANT_DESCRIPTION,
     CONF_PLANT_IMAGE,
     CONF_PLANT_IMAGE_PATH,
+    CONF_REMOVE_PHOTO,
     DESCRIPTION_MAX_LENGTH,
     DOMAIN,
 )
-from .image_store import async_save_image
+from .image_store import async_remove_image, async_save_image
 
 
 def _num_default(defaults, key, fallback):
@@ -131,7 +134,7 @@ async def _async_persist_image(hass, entry_id, user_input, existing_path):
     except ValueError:
         return {CONF_PLANT_IMAGE: "image_upload_failed"}
 
-    saved_path = await async_save_image(hass, entry_id, content)
+    saved_path = await async_save_image(hass, entry_id, content, old_path=existing_path)
     if saved_path is None:
         return {CONF_PLANT_IMAGE: "invalid_image"}
 
@@ -173,10 +176,10 @@ class MKPlantConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             errors = validate_thresholds(user_input)
             errors.update(validate_description(user_input))
             if not errors:
-                # The entry does not exist yet; use the plant name as the
-                # temporary photo filename key for the new entry.
+                # The entry does not exist yet; use the unique flow id as the
+                # photo filename key (unique, unlike the plant name).
                 image_errors = await _async_persist_image(
-                    self.hass, user_input["plant_name"], user_input, None
+                    self.hass, self.flow_id, user_input, None
                 )
                 if not image_errors:
                     return self.async_create_entry(
@@ -225,6 +228,7 @@ class MKPlantOptionsFlowHandler(config_entries.OptionsFlow):
                 vol.Optional(CONF_PLANT_IMAGE): FileSelector(
                     FileSelectorConfig(accept="image/*")
                 ),
+                vol.Optional(CONF_REMOVE_PHOTO, default=False): bool,
             }).extend(plant_schema(defaults, use_selectors=True).schema)
 
         return vol.Schema({
@@ -234,14 +238,38 @@ class MKPlantOptionsFlowHandler(config_entries.OptionsFlow):
             vol.Optional(CONF_PLANT_DESCRIPTION, default=description_default): str,
         }).extend(plant_schema(defaults, use_selectors=False).schema)
 
+    def _photo_placeholder(self):
+        """Return the current photo filename for the form description."""
+        defaults = _entry_defaults(self.config_entry)
+        path = defaults.get(CONF_PLANT_IMAGE_PATH)
+        return Path(path).name if path else "—"
+
     async def async_step_init(self, user_input=None):
+        placeholders = {"current_photo": self._photo_placeholder()}
         if user_input is not None:
             errors = validate_thresholds(user_input)
             errors.update(validate_description(user_input))
+            remove_photo = user_input.pop(CONF_REMOVE_PHOTO, False)
+            existing_path = self.config_entry.data.get(
+                CONF_PLANT_IMAGE_PATH
+            ) or self.config_entry.options.get(CONF_PLANT_IMAGE_PATH)
             if not errors:
-                existing_path = self.config_entry.data.get(
-                    CONF_PLANT_IMAGE_PATH
-                ) or self.config_entry.options.get(CONF_PLANT_IMAGE_PATH)
+                if remove_photo and existing_path:
+                    await async_remove_image(self.hass, existing_path)
+                    # Drop the stale path from entry.data too, otherwise the
+                    # merged config would resurrect the photo after reload.
+                    new_data = {
+                        k: v
+                        for k, v in self.config_entry.data.items()
+                        if k != CONF_PLANT_IMAGE_PATH
+                    }
+                    self.hass.config_entries.async_update_entry(
+                        self.config_entry, data=new_data
+                    )
+                    user_input.pop(CONF_PLANT_IMAGE, None)
+                    user_input.pop(CONF_PLANT_IMAGE_PATH, None)
+                    # Options live in entry.options; the update listener reloads the entry.
+                    return self.async_create_entry(title="", data=user_input)
                 image_errors = await _async_persist_image(
                     self.hass, self.config_entry.entry_id, user_input, existing_path
                 )
@@ -253,9 +281,11 @@ class MKPlantOptionsFlowHandler(config_entries.OptionsFlow):
                 step_id="init",
                 data_schema=self.add_suggested_values_to_schema(self._options_schema(), user_input),
                 errors=errors,
+                description_placeholders=placeholders,
             )
 
         return self.async_show_form(
             step_id="init",
             data_schema=self._options_schema(),
+            description_placeholders=placeholders,
         )

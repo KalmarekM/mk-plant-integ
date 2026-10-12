@@ -71,10 +71,12 @@
     "step": {
       "init": {
         "title": "Konfiguracja",
+        "description": "Aktualne zdjęcie: {current_photo}. Wybierz nowy plik, aby je zastąpić.",
         "data": {
           "moisture_sensor": "Sensor wilgotności gleby",
           "plant_description": "Opis (opcjonalny, markdown)",
           "plant_image": "Zdjęcie (opcjonalne)",
+          "remove_photo": "Usuń zdjęcie",
           "temp_sensor": "Sensor temperatury",
           "humi_sensor": "Sensor wilgotności powietrza",
           "min_moisture": "Minimalna wilgotność (%)",

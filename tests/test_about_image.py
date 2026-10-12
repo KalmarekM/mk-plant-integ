@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import pytest
+from homeassistant.data_entry_flow import FlowResultType
 from pytest_homeassistant_custom_component.common import MockConfigEntry
 
 from custom_components.plant_mk.const import (
@@ -94,3 +95,75 @@ async def test_image_entity_absent_without_photo(hass) -> None:
     await _setup_entry(hass)
 
     assert hass.states.get("image.monstera_photo") is None
+
+
+@pytest.mark.asyncio
+async def test_options_flow_shows_current_photo_status(hass, tmp_path) -> None:
+    """Options flow shows the current photo filename and a remove checkbox."""
+    image_file = tmp_path / "monstera.png"
+    image_file.write_bytes(PNG_BYTES)
+    entry = MockConfigEntry(
+        domain=DOMAIN,
+        title=TEST_DATA["plant_name"],
+        data={**TEST_DATA, CONF_PLANT_IMAGE_PATH: str(image_file)},
+    )
+    entry.add_to_hass(hass)
+
+    result = await hass.config_entries.options.async_init(entry.entry_id)
+
+    assert result["type"] is FlowResultType.FORM
+    assert result["description_placeholders"] == {"current_photo": "monstera.png"}
+    schema_fields = {field.schema for field in result["data_schema"].schema}
+    assert "remove_photo" in schema_fields
+
+
+@pytest.mark.asyncio
+async def test_options_flow_shows_no_photo_status(hass) -> None:
+    """Options flow shows an em dash when no photo is stored."""
+    entry = MockConfigEntry(domain=DOMAIN, title=TEST_DATA["plant_name"], data=TEST_DATA)
+    entry.add_to_hass(hass)
+
+    result = await hass.config_entries.options.async_init(entry.entry_id)
+
+    assert result["description_placeholders"] == {"current_photo": "—"}
+
+
+@pytest.mark.asyncio
+async def test_options_flow_removes_photo(hass, tmp_path) -> None:
+    """The remove checkbox deletes the photo file and clears the stored path."""
+    image_file = tmp_path / "monstera.png"
+    image_file.write_bytes(PNG_BYTES)
+    entry = await _setup_entry(hass, {CONF_PLANT_IMAGE_PATH: str(image_file)})
+    assert hass.states.get("image.monstera_photo") is not None
+
+    result = await hass.config_entries.options.async_init(entry.entry_id)
+    result = await hass.config_entries.options.async_configure(
+        result["flow_id"],
+        user_input={
+            "moisture_sensor": "sensor.soil_moisture_a",
+            "temp_sensor": "sensor.temperature_a",
+            "humi_sensor": "sensor.humidity_a",
+            "min_moisture": 20,
+            "max_moisture": 60,
+            "min_temp": 15,
+            "max_temp": 30,
+            "min_humi": 30,
+            "max_humi": 80,
+            "remove_photo": True,
+        },
+    )
+    await hass.async_block_till_done()
+
+    assert result["type"] is FlowResultType.CREATE_ENTRY
+    assert not image_file.exists()
+    # The path is cleared from both data and options, so the photo stays gone.
+    config = {**entry.data, **entry.options}
+    assert CONF_PLANT_IMAGE_PATH not in config
+    assert "remove_photo" not in entry.options
+    # Per HA convention the entity stays in the registry as unavailable
+    # (restored) once it is no longer provided; the user can delete it from
+    # the entity registry. It no longer serves an image.
+    state = hass.states.get("image.monstera_photo")
+    assert state is not None
+    assert state.state == "unavailable"
+    assert state.attributes.get("restored") is True

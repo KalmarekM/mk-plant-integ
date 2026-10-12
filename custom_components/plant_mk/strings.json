@@ -71,10 +71,12 @@
     "step": {
       "init": {
         "title": "Configuration",
+        "description": "Current photo: {current_photo}. Choose a new file to replace it.",
         "data": {
           "moisture_sensor": "Soil moisture sensor",
           "plant_description": "Description (optional, markdown)",
           "plant_image": "Photo (optional)",
+          "remove_photo": "Remove photo",
           "temp_sensor": "Temperature sensor",
           "humi_sensor": "Air humidity sensor",
           "min_moisture": "Minimum moisture (%)",

@@ -47,18 +47,15 @@ def detect_content_type(content: bytes) -> str | None:
     return None
 
 
-def find_image_path(hass: HomeAssistant, entry_id: str) -> str | None:
-    """Return the persisted photo path for an entry, scanning known extensions."""
-    directory = image_dir(hass)
-    for ext in _CONTENT_TYPE_EXT.values():
-        candidate = directory / f"{entry_id}{ext}"
-        if candidate.is_file():
-            return str(candidate)
-    return None
+async def async_save_image(
+    hass: HomeAssistant, key: str, content: bytes, old_path: str | None = None
+) -> str | None:
+    """Persist image bytes under key. Returns the saved path or None if invalid.
 
-
-async def async_save_image(hass: HomeAssistant, entry_id: str, content: bytes) -> str | None:
-    """Persist image bytes for an entry. Returns the saved path or None if invalid."""
+    When old_path is given, the previously stored file is removed, so replacing
+    a photo never leaves orphaned files on disk (the old file may have been
+    named differently, e.g. by flow id at creation time).
+    """
 
     content_type = detect_content_type(content)
     if content_type is None or len(content) > IMAGE_MAX_BYTES:
@@ -67,11 +64,23 @@ async def async_save_image(hass: HomeAssistant, entry_id: str, content: bytes) -
     def _write() -> str:
         directory = image_dir(hass)
         directory.mkdir(parents=True, exist_ok=True)
-        # Remove any previous photo of this entry regardless of extension.
-        for old in directory.glob(f"{entry_id}.*"):
-            old.unlink(missing_ok=True)
-        path = image_path_for(hass, entry_id, content_type)
+        if old_path:
+            Path(old_path).unlink(missing_ok=True)
+        else:
+            # Remove any previous photo stored under this key.
+            for old in directory.glob(f"{key}.*"):
+                old.unlink(missing_ok=True)
+        path = image_path_for(hass, key, content_type)
         path.write_bytes(content)
         return str(path)
 
     return await hass.async_add_executor_job(_write)
+
+
+async def async_remove_image(hass: HomeAssistant, path: str) -> None:
+    """Delete a previously persisted plant photo."""
+
+    def _remove() -> None:
+        Path(path).unlink(missing_ok=True)
+
+    await hass.async_add_executor_job(_remove)

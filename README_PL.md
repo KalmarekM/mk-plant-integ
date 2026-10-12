@@ -68,7 +68,7 @@ content: "{{ state_attr('sensor.monstera_about', 'description') }}"
 
 ### Zdjęcie rośliny
 
-Wybierz zdjęcie w config/options flow (JPEG/PNG/GIF/WebP, maks. 5 MB). Jest zapisywane w `config/plant_mk/images/` i serwowane przez uwierzytelnioną encję `image` — nie jest publicznie dostępne przez `/local/`.
+Wybierz zdjęcie w config/options flow (JPEG/PNG/GIF/WebP, maks. 5 MB). Jest zapisywane w `config/plant_mk/images/` i serwowane przez uwierzytelnioną encję `image` — nie jest publicznie dostępne przez `/local/`. Options flow pokazuje nazwę aktualnie dołączonego zdjęcia; wybierz nowy plik, aby je zastąpić, albo zaznacz **Usuń zdjęcie**, aby je skasować (pozostała encja `image` pozostaje w rejestrze jako niedostępna i można ją tam usunąć).
 
 ## Przykładowa automatyzacja
 
@@ -94,6 +94,15 @@ actions:
 ```
 
 ## Dziennik zmian
+
+### [1.2.1] — 2026-10-12
+
+#### Dodane
+- Options flow pokazuje teraz **nazwę aktualnie dołączonego zdjęcia** oraz checkbox **Usuń zdjęcie**; usunięcie kasuje zapisany plik.
+
+#### Naprawione
+- Pliki zdjęć są teraz nazwane unikalnym identyfikatorem flow przy tworzeniu, co zapobiega kolizjom między roślinami o tej samej nazwie.
+- Zastąpienie zdjęcia usuwa poprzednio zapisany plik (brak osieroconych plików na dysku).
 
 ### [1.2.0] — 2026-10-06
 
